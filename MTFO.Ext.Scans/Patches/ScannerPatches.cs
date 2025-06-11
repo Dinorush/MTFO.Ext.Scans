@@ -4,7 +4,7 @@ using HarmonyLib;
 using Player;
 using System.Diagnostics.CodeAnalysis;
 using System;
-using System.Text;
+using SNetwork;
 
 namespace MTFO.Ext.Scans.Patches
 {
@@ -16,6 +16,8 @@ namespace MTFO.Ext.Scans.Patches
         [HarmonyPrefix]
         private static void CleanupDeadScanner(CP_PlayerScanner __instance)
         {
+            if (!SNet.IsMaster || __instance.m_scanActive) return;
+
             if (!ScanDataManager.TryGetScanData(__instance.gameObject, out var scanData)) return;
             if (scanData.PerTeamSizeScanMultis == null) return;
 
