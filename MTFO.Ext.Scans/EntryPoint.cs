@@ -1,17 +1,17 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
-using MTFO.Ext.TeamScanMulti.CustomPuzzleData;
-using MTFO.Ext.TeamScanMulti.Dependencies;
+using MTFO.Ext.Scans.CustomPuzzleData;
+using MTFO.Ext.Scans.Dependencies;
 
-namespace MTFO.Ext.TeamScanMulti
+namespace MTFO.Ext.Scans
 {
-    [BepInPlugin("MTFO.Extension.TeamScanMulti", MODNAME, "1.0.0")]
+    [BepInPlugin("MTFO.Extension.Scans", MODNAME, "1.0.0")]
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency(MTFOWrapper.PLUGIN_GUID, BepInDependency.DependencyFlags.HardDependency)]
     internal sealed class EntryPoint : BasePlugin
     {
-        public const string MODNAME = "MTFO.Ext.TeamScanMulti";
+        public const string MODNAME = "MTFO.Ext.Scans";
 
         public override void Load()
         {

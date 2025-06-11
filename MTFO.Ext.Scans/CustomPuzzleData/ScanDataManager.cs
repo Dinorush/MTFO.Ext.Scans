@@ -1,16 +1,18 @@
 ﻿using ChainedPuzzles;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 using MTFO.API;
+using MTFO.Ext.Scans.Dependencies;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 
-namespace MTFO.Ext.TeamScanMulti.CustomPuzzleData
+namespace MTFO.Ext.Scans.CustomPuzzleData
 {
     public static class ScanDataManager
     {
-        private readonly static Dictionary<uint, float> _fullTeamMultis = new();
+        private readonly static Dictionary<uint, ScanData> _scanData = new();
         private readonly static Dictionary<IntPtr, (float[] multis, CP_PlayerScanner scanner)> _originalMultis = new();
 
         internal static void Init()
@@ -36,11 +38,22 @@ namespace MTFO.Ext.TeamScanMulti.CustomPuzzleData
             }
 
             foreach (var data in list)
-                if (data.FullTeamScanMulti != 0)
-                    _fullTeamMultis.TryAdd(data.PersistentID, data.FullTeamScanMulti);
+            {
+                _scanData.TryAdd(data.PersistentID, data);
+            }
         }
 
-        public static bool TryGetFullTeamScanMulti(uint id, out float multi) => _fullTeamMultis.TryGetValue(id, out multi);
+        public static bool TryGetScanData(UnityEngine.GameObject go, [MaybeNullWhen(false)] out ScanData data)
+        {
+            data = null;
+            var mtfoData = MTFOWrapper.GetCorePuzzleData.Invoke(go, null);
+            if (mtfoData == null) return false;
+
+            var id = (Il2CppValueField<uint>)MTFOWrapper.GetCorePuzzleDataID.GetValue(mtfoData)!;
+            return TryGetScanData(id, out data);
+        }
+
+        public static bool TryGetScanData(uint id, [MaybeNullWhen(false)] out ScanData data) => _scanData.TryGetValue(id, out data);
         public static bool TryCacheScanData(CP_Bioscan_Core scan, [MaybeNullWhen(false)] out (float[] multis, CP_PlayerScanner scanner) cachedData)
         {
             var ptr = scan.Pointer;

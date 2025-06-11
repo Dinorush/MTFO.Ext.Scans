@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace MTFO.Ext.TeamScanMulti.Dependencies
+namespace MTFO.Ext.Scans.Dependencies
 {
     internal static class MTFOWrapper
     {

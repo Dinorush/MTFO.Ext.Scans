@@ -1,6 +1,6 @@
 ﻿using BepInEx.Logging;
 
-namespace MTFO.Ext.TeamScanMulti
+namespace MTFO.Ext.Scans
 {
     internal static class DinoLogger
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTFO.Ext.TeamScanMulti.CustomPuzzleData
+namespace MTFO.Ext.Scans.CustomPuzzleData
 {
     internal class ScanDataHolder
     {

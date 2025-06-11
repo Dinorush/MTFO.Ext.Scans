@@ -1,31 +1,25 @@
 ﻿using ChainedPuzzles;
-using MTFO.Ext.TeamScanMulti.CustomPuzzleData;
+using MTFO.Ext.Scans.CustomPuzzleData;
 using HarmonyLib;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Player;
-using MTFO.Ext.TeamScanMulti.Dependencies;
 
-namespace MTFO.Ext.TeamScanMulti.Patches
+namespace MTFO.Ext.Scans.Patches
 {
-    [HarmonyPatch(typeof(CP_Bioscan_Core))]
-    internal static class CP_Bioscan_Core_Patches
+    [HarmonyPatch]
+    internal static class BioscanPatches
     {
-        [HarmonyPatch(nameof(CP_Bioscan_Core.OnDestroy))]
+        [HarmonyPatch(typeof(CP_Bioscan_Core), nameof(CP_Bioscan_Core.OnDestroy))]
         [HarmonyPostfix]
         private static void CleanupDeadScanner(CP_Bioscan_Core __instance)
         {
             ScanDataManager.RemoveCacheData(__instance);
         }
 
-        [HarmonyPatch(nameof(CP_Bioscan_Core.Master_OnPlayerScanChangedCheckProgress))]
+        [HarmonyPatch(typeof(CP_Bioscan_Core), nameof(CP_Bioscan_Core.Master_OnPlayerScanChangedCheckProgress))]
         [HarmonyPostfix]
         private static void UpdateFullTeamMultiChange(CP_Bioscan_Core __instance, Il2CppSystem.Collections.Generic.List<PlayerAgent> playersInScan, int inScanMax)
         {
-            var mtfoData = MTFOWrapper.GetCorePuzzleData.Invoke(__instance.gameObject, null);
-            if (mtfoData == null) return;
-
-            var id = (Il2CppValueField<uint>)MTFOWrapper.GetCorePuzzleDataID.GetValue(mtfoData)!;
-            if (!ScanDataManager.TryGetFullTeamScanMulti(id, out var fullTeamMulti)) return;
+            if (!ScanDataManager.TryGetScanData(__instance.gameObject, out var scanData) || scanData.FullTeamScanMulti == 0) return;
             if (!ScanDataManager.TryCacheScanData(__instance, out (float[] multis, CP_PlayerScanner scanner) cache)) return;
 
             var scannerMultis = cache.scanner.m_scanSpeeds;
@@ -33,7 +27,7 @@ namespace MTFO.Ext.TeamScanMulti.Patches
             {
                 for (int i = 0; i < cache.multis.Length; i++)
                 {
-                    scannerMultis[i] = fullTeamMulti;
+                    scannerMultis[i] = scanData.FullTeamScanMulti;
                 }
             }
             else
