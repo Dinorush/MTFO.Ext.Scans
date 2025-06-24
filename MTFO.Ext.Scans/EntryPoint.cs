@@ -6,8 +6,7 @@ using MTFO.Ext.Scans.Dependencies;
 
 namespace MTFO.Ext.Scans
 {
-    [BepInPlugin("MTFO.Extension.Scans", MODNAME, "1.0.0")]
-    [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInPlugin("MTFO.Extension.Scans", MODNAME, "1.0.1")]
     [BepInDependency(MTFOWrapper.PLUGIN_GUID, BepInDependency.DependencyFlags.HardDependency)]
     internal sealed class EntryPoint : BasePlugin
     {
@@ -28,8 +27,6 @@ namespace MTFO.Ext.Scans
 
             ScanDataManager.Init();
             new Harmony(MODNAME).PatchAll();
-            GTFO.API.LevelAPI.OnLevelCleanup += ScanDataManager.OnCleanup;
-
             Log.LogMessage("Loaded " + MODNAME);
         }
     }

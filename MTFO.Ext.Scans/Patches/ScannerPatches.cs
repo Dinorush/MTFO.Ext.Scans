@@ -14,20 +14,23 @@ namespace MTFO.Ext.Scans.Patches
         [HarmonyPatch(typeof(CP_PlayerScanner), nameof(CP_PlayerScanner.StartScan))]
         [HarmonyPriority(Priority.High)] // Run before LobbyExpansion
         [HarmonyPrefix]
-        private static void CleanupDeadScanner(CP_PlayerScanner __instance)
+        private static void ApplyScanSpeed(CP_PlayerScanner __instance)
         {
             if (!SNet.IsMaster || __instance.m_scanActive) return;
 
             if (!ScanDataManager.TryGetScanData(__instance.gameObject, out var scanData)) return;
-            if (scanData.PerTeamSizeScanMultis == null) return;
 
             int playerCount = PlayerManager.PlayerAgentsInLevel.Count;
-            if (!TryGetScanMultis(scanData.PerTeamSizeScanMultis, playerCount, out var list)) return;
+            if (scanData.PerTeamSizeScanMultis != null && TryGetScanMultis(scanData.PerTeamSizeScanMultis, playerCount, out var list))
+            {
+                if (list.Length > 4)
+                    __instance.m_scanSpeeds = new float[list.Length];
+                for (int i = 0; i < __instance.m_scanSpeeds.Length; i++)
+                    __instance.m_scanSpeeds[i] = list[Math.Min(i, list.Length - 1)];
+            }
 
-            if (list.Length > 4)
-                __instance.m_scanSpeeds = new float[list.Length];
-            for (int i = 0; i < __instance.m_scanSpeeds.Length; i++)
-                __instance.m_scanSpeeds[i] = list[Math.Min(i, list.Length - 1)];
+            if (scanData.FullTeamScanMulti != 0)
+                __instance.m_scanSpeeds[playerCount - 1] = scanData.FullTeamScanMulti;
         }
 
         private static bool TryGetScanMultis(float[][] lists, int playerCount, [MaybeNullWhen(false)] out float[] scanMultis)
