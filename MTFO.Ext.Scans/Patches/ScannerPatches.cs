@@ -30,7 +30,17 @@ namespace MTFO.Ext.Scans.Patches
             }
 
             if (scanData.FullTeamScanMulti != 0)
+            {
+                var oldSpeeds = __instance.m_scanSpeeds;
+                if (oldSpeeds.Length < playerCount)
+                {
+                    __instance.m_scanSpeeds = new float[playerCount];
+                    for (int i = 0; i < __instance.m_scanSpeeds.Length; i++)
+                        __instance.m_scanSpeeds[i] = oldSpeeds[Math.Min(i, oldSpeeds.Length - 1)];
+                }
+
                 __instance.m_scanSpeeds[playerCount - 1] = scanData.FullTeamScanMulti;
+            }
         }
 
         private static bool TryGetScanMultis(float[][] lists, int playerCount, [MaybeNullWhen(false)] out float[] scanMultis)
