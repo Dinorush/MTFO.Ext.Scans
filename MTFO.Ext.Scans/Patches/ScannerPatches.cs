@@ -56,29 +56,5 @@ namespace MTFO.Ext.Scans.Patches
             scanMultis = null;
             return false;
         }
-
-        [HarmonyPatch(typeof(CP_Bioscan_Graphics), nameof(CP_Bioscan_Graphics.SetVisible))]
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.Low)]
-        private static void CustomBulkheadBioscanFix(CP_Bioscan_Graphics __instance, bool visible)
-        {
-            if (!visible || !ScanDataManager.TryGetScanData(__instance.gameObject, out var scanData)) return;
-
-            if (scanData.BioScanGraphics.HideBulkheadSkullGraphic)
-            {
-                __instance.SetText(scanData.BioScanGraphics.ScanText); // override BH scan text
-                foreach (var info in __instance.transform.FindChildrenRecursive("Skull", false))
-                {
-                    info?.gameObject.SetActive(false); // disable skull graphics
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(CP_Bioscan_Hud), nameof(CP_Bioscan_Hud.Setup))]
-        [HarmonyPrefix]
-        private static void NullBioscanHudTMPFix(CP_Bioscan_Hud __instance)
-        {
-            __instance.m_bioscanWorldText ??= new TMPro.TextMeshPro(); // fix null TMP on some bioscan huds
-        }
     }
 }
