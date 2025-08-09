@@ -6,7 +6,7 @@ using MTFO.Ext.Scans.Dependencies;
 
 namespace MTFO.Ext.Scans
 {
-    [BepInPlugin("MTFO.Extension.Scans", MODNAME, "1.0.2")]
+    [BepInPlugin("MTFO.Extension.Scans", MODNAME, "1.1.0")]
     [BepInDependency(MTFOWrapper.PLUGIN_GUID, BepInDependency.DependencyFlags.HardDependency)]
     internal sealed class EntryPoint : BasePlugin
     {
